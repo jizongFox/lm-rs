@@ -1,0 +1,24 @@
+name: lm-rs
+channels:
+  - pytorch
+  - conda-forge
+  - nvidia
+  - nodefaults
+dependencies:
+  - mkl=2023.2
+  - setuptools=68.2
+  - cxx-compiler=1.4.2
+  - pytorch-cuda=11.7
+  - plyfile=0.8.1
+  - python=3.9
+  - pip=22.3.1
+  - numpy=1.23
+  - pytorch=1.13.0
+  - torchvision=0.14
+  - tensorboard=2.20
+  - tqdm
+  - pip:
+    - scikit-learn==1.6
+    - scipy==1.11
+    - matplotlib==3.9
+    - submodules/simple-knn

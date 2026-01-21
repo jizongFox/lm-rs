@@ -1,0 +1,11 @@
+[submodule "SIBR_viewers"]
+	path = SIBR_viewers
+	url = https://gitlab.inria.fr/sibr/sibr_core.git
+	
+[submodule "submodules/simple-knn"]
+	path = submodules/simple-knn
+	url = https://gitlab.mpi-klsb.mpg.de/hpehliva/simple_knn.git
+	branch = main
+[submodule "submodules/diff-gaussian-rasterization"]
+	path = submodules/diff-gaussian-rasterization
+	url = https://gitlab.mpi-klsb.mpg.de/hpehliva/gaussian-rasterization-jacobian.git

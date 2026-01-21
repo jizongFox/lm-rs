@@ -1,0 +1,23 @@
+*.pyc
+datasets/
+datasets
+*.out
+output
+build
+diff_rasterization/diff_rast.egg-info
+diff_rasterization/dist
+tensorboard_3d
+screenshots
+snapshot_bw.dump
+*.mp4
+.vscode/
+
+# Ignore the directories inside the tests (i.e. dumps)
+tests/*/
+
+*.npy
+*.txt
+*.pdf
+*.csv
+
+__pycache__/
