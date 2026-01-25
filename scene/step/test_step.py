@@ -54,7 +54,7 @@ def get_gradient(gaussians, shp) -> torch.Tensor:
 
 def save_jacob(batch_size, scene, viewpoint_stack, gaussians, pipe, background, camera_sampler, model_path):
     path = os.path.join(model_path, "Jacobians")
-
+    os.makedirs(path, exist_ok=True)
     start = time.time()
     for current_batch in range(batch_size):
         viewpoint_cam = camera_sampler.get_camera(current_batch)
