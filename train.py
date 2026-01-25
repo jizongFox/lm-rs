@@ -196,9 +196,7 @@ def training(dataset, opt, pipe, log_dict, saving_iterations, checkpoint_iterati
                     densify_prune_adam(opt, gaussians, scene, iteration, visibility_filter, radii, viewspace_point_tensor, optimization_method)
             
             start_optim = time.time()
-            if optimization_method == "first_order":
-                optimizerHandler.step(gaussians)
-            else:
+            if iteration < opt.iterations:
                 optimizerHandler.step(gaussians)
             torch.cuda.synchronize()
             elapsed = (time.time() - start_optim)
