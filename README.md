@@ -34,6 +34,11 @@ The repository contains submodules, thus clone it with ```--recursive``` option:
 git clone --recursive https://github.com/hamzapehlivan/lm-rs.git
 ```
 
+If you already cloned the repository without the --recursive option, run:
+```
+git submodule update --init --recursive
+```
+
 ## Overview
 
 Our method introduces a second-order optimizer for training 3D Gaussian splats. Below, we summarize the key modifications compared to the original 3DGS framework: 
@@ -214,6 +219,6 @@ To reduce computational overhead associated with large Jacobians, the tests are 
 3. Computes matrix-free Jacobian-vector product results using our CUDA implementation.
 4. Computes ground truth Jacobian-vector products from Step 2, and compares it with the CUDA-accelerated results obtained in Step 3. 
 
-Since we compute the dense ground truth Jacobians, this test requires at least 25 GB memory.
+Since we compute the dense ground truth Jacobians, this test requires at least 35 GB memory, and can take up to 20 minutes to complete in the first run.  
 
 
