@@ -38,13 +38,13 @@ attribute_to_name = {0: "opacity",
                      12: "rotation_y", 
                      13: "rotation_z"}
 parser = argparse.ArgumentParser(
-        description="Example script that accepts an integer and a string."
+        description="Tests the CUDA results."
     )
 parser.add_argument("--batch_size", type=int, default=4)
 parser.add_argument("--Jpath", type=str, 
-    default="unit_tests/GT_Jacobians/Jacobians", help="Main path to GT Jacobians")
+    default="tests/GT_Jacobians/Jacobians", help="Main path to GT Jacobians")
 parser.add_argument("--J_cuda_path", type=str, 
-    default="unit_tests/gauss-newton-ckpt/cuda_results", help="Main path to CUDA results")
+    default="tests/gauss-newton-ckpt/cuda_results", help="Main path to CUDA results")
 parser.add_argument("--atol", type=float, 
     default=1e-5, help="Absolute Tolerance for Comparisons")
 parser.add_argument("--rtol", type=float, 

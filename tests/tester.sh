@@ -10,8 +10,8 @@ TOTAL_BATCH=4
 
 
 # PATHS 
-ADAM_PATH="unit_tests/adam_ckpt_iter1000/"
-JACOBIAN_PATH="unit_tests/GT_Jacobians/"
+ADAM_PATH="tests/adam_ckpt_iter1000/"
+JACOBIAN_PATH="tests/GT_Jacobians/"
 
 
 # Run Adam, create a ckpt to start from 
@@ -44,20 +44,20 @@ if [ ! -d "$JACOBIAN_PATH" ] && [ ! -L "$JACOBIAN_PATH" ]; then
     python train.py -r=8 --images $IMAGES --camera_sampler sequential --source_path $SOURCE_PATH --model_path $JACOBIAN_PATH \
             --eval --optimization_method=cg-gpu --kernel=-1 --loss_fn $LOSS_FN --iterations=1001  --sh_degree=0 \
             --disable_scheds --batch_size $TOTAL_BATCH \
-            --start_checkpoint=unit_tests/adam_ckpt_iter1000/chkpnt1000.pth >${JACOBIAN_PATH}/log.txt 2>${JACOBIAN_PATH}/error.txt
+            --start_checkpoint=tests/adam_ckpt_iter1000/chkpnt1000.pth >${JACOBIAN_PATH}/log.txt 2>${JACOBIAN_PATH}/error.txt
 fi
 # #### End of Jacobian dumping
 
 # # Dump the results of custom CUDA implementation
-MODEL_PATH="unit_tests/gauss-newton-ckpt/"
+MODEL_PATH="tests/gauss-newton-ckpt/"
 mkdir -p $MODEL_PATH
 python train.py --images $IMAGES --camera_sampler sequential --source_path $SOURCE_PATH --model_path $MODEL_PATH \
         --eval --optimization_method=cg-gpu --kernel=1 --loss_fn $LOSS_FN --iterations=1001 --sh_degree=0 \
         --ssim_weight $SSIM_WEIGHT --sampling_distribution uniform -r=8 \
         --disable_scheds --batch_size $TOTAL_BATCH --return_matvec_kernels --save=True \
-        --start_checkpoint=unit_tests/adam_ckpt_iter1000/chkpnt1000.pth #>${MODEL_PATH}/log.txt 2>${MODEL_PATH}/error.txt
+        --start_checkpoint=tests/adam_ckpt_iter1000/chkpnt1000.pth >${MODEL_PATH}/log.txt 2>${MODEL_PATH}/error.txt
 
 #### End of dumping CUDA results
 
 # Check if GT values match with CUDA
-python unit_tests/test_cuda.py --batch_size $TOTAL_BATCH
+python tests/test_cuda.py --batch_size $TOTAL_BATCH
