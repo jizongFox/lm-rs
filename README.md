@@ -46,7 +46,7 @@ Our method introduces a second-order optimizer for training 3D Gaussian splats. 
 - [**Pixel Sampler:**](scene/pixel_sampler/uniform_sampler.py) The pixel sampling strategy to subsample Jacobians to increase efficiency. 
 - [**Dynamic Learning Rate Scheduler:**](scene/optim_strategy/cgOptimizer.py) The implementation of our dynamic learning rate scheduler. 
 - [**CG Solver**](scene/optim_strategy/solvers/cg.py) The implementation of the preconditioned conjugate gradient solver. 
-- We provide custom CUDA implementation to compute approximated Jacobian-vector products, which uses [forward-mode differentiation](submodules/diff-gaussian-rasterization/cuda_rasterizer/optimizerKernels/kernel/JTJv.cu) and [dual numbers](submodules/diff-gaussian-rasterization/cuda_rasterizer/dual_numbers/dual_numbers.h).
+- We provide custom CUDA implementation to compute approximated Jacobian-vector products, which uses [forward-mode differentiation](https://gitlab.mpi-klsb.mpg.de/hpehliva/gaussian-rasterization-jacobian/-/blob/master/cuda_rasterizer/optimizerKernels/kernel/JTJv.cu) and [dual numbers](https://gitlab.mpi-klsb.mpg.de/hpehliva/gaussian-rasterization-jacobian/blob/master/cuda_rasterizer/dual_numbers/dual_numbers.h).
 
 ## Second-order Optimizer
 
