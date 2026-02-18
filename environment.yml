@@ -8,13 +8,13 @@ dependencies:
   - mkl=2023.2
   - setuptools=68.2
   - cxx-compiler=1.4.2
-  - pytorch-cuda=11.7
+  - pytorch-cuda=12.4
   - plyfile=0.8.1
   - python=3.9
   - pip=22.3.1
   - numpy=1.23
-  - pytorch=1.13.0
-  - torchvision=0.14
+  - pytorch=2.4.0
+  - torchvision=0.19
   - tensorboard=2.20
   - tqdm
   - pip:

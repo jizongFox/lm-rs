@@ -2,8 +2,6 @@ import torch
 import numpy as np
 from gaussian_renderer import render
 import time
-from random import randint
-from utils.loss_utils import l2_loss
 import os
 
 def get_jacobian(image, x):

@@ -1,13 +1,8 @@
 import torch
-from utils.loss_utils import l2_loss, ssim
 import matplotlib.pyplot as plt
-import matplotlib.colors as colors
-import matplotlib.cm as cm
 import os
-from utils.logging_utils import timing
 from arguments import GaussNewtonOptimizationParams
 import numpy as np
-from gaussian_renderer import render
 from .residuals.get_residual import mse_residual, SimpleSSIMDerivative
 from typing import NamedTuple
 from .solvers import get_solver

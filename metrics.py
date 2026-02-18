@@ -75,10 +75,10 @@ def evaluate(model_paths):
                     lpipss.append(lpips(renders[idx].cuda(), gts[idx].cuda(), net_type='vgg'))
                     mse.append(l2_loss(renders[idx].cuda(), gts[idx].cuda()))
 
-                print("  SSIM : {:>12.7f}".format(torch.tensor(ssims).mean(), ".5"))
-                print("  PSNR : {:>12.7f}".format(torch.tensor(psnrs).mean(), ".5"))
-                print("  LPIPS: {:>12.7f}".format(torch.tensor(lpipss).mean(), ".5"))
-                print("  MSE  : {:>12.7f}".format(torch.tensor(mse).mean(), ".5"))
+                print("  SSIM : {:>12.7f}".format(torch.tensor(ssims).mean(), ))
+                print("  PSNR : {:>12.7f}".format(torch.tensor(psnrs).mean(), ))
+                print("  LPIPS: {:>12.7f}".format(torch.tensor(lpipss).mean(), ))
+                print("  MSE  : {:>12.7f}".format(torch.tensor(mse).mean(), ))
 
                 full_dict[scene_dir][method].update({"SSIM": torch.tensor(ssims).mean().item(),
                                                         "PSNR": torch.tensor(psnrs).mean().item(),

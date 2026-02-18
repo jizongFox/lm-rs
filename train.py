@@ -14,7 +14,7 @@ import sys
 import os
 
 import torch
-from utils.loss_utils import l1_loss, ssim, l2_loss
+from utils.loss_utils import ssim, l2_loss
 from gaussian_renderer import render, network_gui
 from scene import Scene, GaussianModel
 from utils.general_utils import safe_state
@@ -94,15 +94,15 @@ def save_tensors(gaussians:GaussianModel, params:GaussNewtonOptimizationParams, 
 
     out_dir = os.path.join(path, "cuda_results")
     os.makedirs(out_dir, exist_ok=True)
-    np.save( os.path.join(out_dir,f"gradient_cuda.npy"), 
+    np.save( os.path.join(out_dir,"gradient_cuda.npy"), 
             optimizerHandler.solver.r.cpu().numpy())
-    np.save( os.path.join(out_dir,f"diag_cuda.npy"), 
+    np.save( os.path.join(out_dir,"diag_cuda.npy"), 
             optimizerHandler.solver.diag.cpu().numpy())
-    np.save( os.path.join(out_dir,f"JTJv_cuda.npy"), 
+    np.save( os.path.join(out_dir,"JTJv_cuda.npy"), 
             optimizerHandler.solver.Ap.cpu().numpy())
-    np.save( os.path.join(out_dir,f"likelihoods.npy"), 
+    np.save( os.path.join(out_dir,"likelihoods.npy"), 
             gaussians.cgState.state["likelihoods"].cpu().numpy())
-    np.save( os.path.join(out_dir,f"sampled_pixels.npy"), 
+    np.save( os.path.join(out_dir,"sampled_pixels.npy"), 
             gaussians.cgState.state["sampled_pixels"].cpu().numpy())
 
     print("CUDA Results are Saved Succesfully")
@@ -160,7 +160,7 @@ def training(dataset, opt, pipe, log_dict, saving_iterations, checkpoint_iterati
                 network_gui.send(net_image_bytes, dataset.source_path)
                 if do_training and ((iteration < int(opt.iterations)) or not keep_alive):
                     break
-            except Exception as e:
+            except Exception:
                 network_gui.conn = None
         if optimization_method == "first_order":
             batch_size = gn_opt_params.batch_size

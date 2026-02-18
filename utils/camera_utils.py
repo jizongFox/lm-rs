@@ -13,8 +13,6 @@ from scene.cameras import Camera
 import numpy as np
 from utils.general_utils import PILtoTorch
 from utils.graphics_utils import fov2focal
-from PIL import Image
-import torch
 
 WARNED = False
 

@@ -14,7 +14,7 @@ snapshot_bw.dump
 
 # Ignore the directories inside the tests (i.e. dumps)
 tests/*/
-
+venv
 *.npy
 *.txt
 *.pdf

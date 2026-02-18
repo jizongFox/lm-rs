@@ -2,7 +2,6 @@ import torch
 from scene.optim_strategy.cgOptimizer import CGOptimizer
 from arguments import  GaussNewtonOptimizationParams
 from gaussian_renderer import render
-from scene.optim_strategy.residuals.get_residual import mse_residual
 from scene.gaussian_model import GaussianModel
 import time
 
