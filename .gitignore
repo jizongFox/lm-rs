@@ -21,3 +21,30 @@ venv
 *.csv
 
 __pycache__/
+
+# IDE
+.idea/
+.vscode/
+.ruff_cache/
+.jbeval/
+
+# Python
+*.egg-info/
+dist/
+*.egg
+env/
+.venv/
+
+# CUDA / build
+*.so
+build/
+submodules/*/build/
+submodules/*/*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
