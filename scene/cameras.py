@@ -72,12 +72,8 @@ class Camera(nn.Module):
             )
             self.data_device = torch.device("cuda")
 
-        if gt_alpha_mask is not None:
-            self.original_image *= gt_alpha_mask.to(self.data_device)
-        else:
-            self.original_image *= torch.ones(
-                (1, self.image_height, self.image_width), device=self.data_device
-            )
+        # Use self.image (lazy loading property) for original_image
+        self.original_image = self.image
 
         self.zfar = 100.0
         self.znear = 0.01

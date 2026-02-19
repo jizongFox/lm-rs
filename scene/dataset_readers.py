@@ -14,7 +14,7 @@ import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 import numpy as np
 from PIL import Image
@@ -37,11 +37,11 @@ from utils.sh_utils import SH2RGB
 @dataclass(kw_only=True)
 class CameraInfo:
     uid: int
-    R: np.array
-    T: np.array
-    FovY: np.array
-    FovX: np.array
-    image: np.array | None = None
+    R: np.ndarray
+    T: np.ndarray
+    FovY: np.ndarray
+    FovX: np.ndarray
+    image: Optional[np.ndarray] = None
     image_path: str
     image_name: str
     width: int

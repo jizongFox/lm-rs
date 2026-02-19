@@ -22,7 +22,10 @@ WARNED = False
 
 def loadCam(args, id, cam_info, resolution_scale=1.0):
     assert resolution_scale == 1, "Resolution scale should be 1 for now"
-    orig_w, orig_h = cam_info.image.size
+
+    # Get dimensions from cam_info
+    orig_w = cam_info.width
+    orig_h = cam_info.height
 
     if args.resolution in [1, 2, 4, 8]:
         scale = args.resolution
@@ -51,15 +54,8 @@ def loadCam(args, id, cam_info, resolution_scale=1.0):
     from scene.dataset_readers import CameraInfo
 
     cam_info: CameraInfo
-    # resized_image_rgb = PILtoTorch(cam_info.image, resolution)
-    # original_image = PILtoTorch(cam_info.image, cam_info.image.size)
 
-    # gt_image = resized_image_rgb[:3, ...]
-    # original_image = original_image[:3, ...]
     loaded_mask = None
-    #
-    # if resized_image_rgb.shape[1] == 4:
-    #     loaded_mask = resized_image_rgb[3:4, ...]
 
     return Camera(
         colmap_id=cam_info.uid,
