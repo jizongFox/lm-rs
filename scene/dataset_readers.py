@@ -9,39 +9,47 @@
 # For inquiries contact  george.drettakis@inria.fr
 #
 
+import json
 import os
 import sys
-from PIL import Image
+from dataclasses import dataclass
+from pathlib import Path
 from typing import NamedTuple
+
+import numpy as np
+from PIL import Image
+from plyfile import PlyData, PlyElement
+
 from scene.colmap_loader import (
-    read_extrinsics_text,
-    read_intrinsics_text,
     qvec2rotmat,
     read_extrinsics_binary,
+    read_extrinsics_text,
     read_intrinsics_binary,
+    read_intrinsics_text,
     read_points3D_binary,
     read_points3D_text,
 )
-from utils.graphics_utils import getWorld2View2, focal2fov, fov2focal
-import numpy as np
-import json
-from pathlib import Path
-from plyfile import PlyData, PlyElement
-from utils.sh_utils import SH2RGB
 from scene.gaussian_model import BasicPointCloud
+from utils.graphics_utils import focal2fov, fov2focal, getWorld2View2
+from utils.sh_utils import SH2RGB
 
 
-class CameraInfo(NamedTuple):
+@dataclass(kw_only=True)
+class CameraInfo:
     uid: int
     R: np.array
     T: np.array
     FovY: np.array
     FovX: np.array
-    image: np.array
+    image: np.array | None = None
     image_path: str
     image_name: str
     width: int
     height: int
+    focal_x: float
+    focal_y: float
+    cx: float
+    cy: float
 
 
 class SceneInfo(NamedTuple):
@@ -93,24 +101,28 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
         R = np.transpose(qvec2rotmat(extr.qvec))
         T = np.array(extr.tvec)
 
-        if intr.model == "SIMPLE_PINHOLE":
+        if intr.model == "SIMPLE_PINHOLE" or intr.model == "SIMPLE_RADIAL":
             focal_length_x = intr.params[0]
             FovY = focal2fov(focal_length_x, height)
             FovX = focal2fov(focal_length_x, width)
+            raise NotImplementedError()
         elif intr.model == "PINHOLE":
             focal_length_x = intr.params[0]
             focal_length_y = intr.params[1]
             FovY = focal2fov(focal_length_y, height)
             FovX = focal2fov(focal_length_x, width)
+            cx = intr.params[2]
+            cy = intr.params[3]
         else:
             assert False, (
                 "Colmap camera model not handled: only undistorted datasets (PINHOLE or SIMPLE_PINHOLE cameras) supported!"
             )
 
-        # Use full path from extr.name to preserve subdirectory structure
-        image_path = os.path.join(images_folder, extr.name)
-        image_name = os.path.basename(extr.name).split(".")[0]
-        image = Image.open(image_path)
+        image_path: str = os.path.join(images_folder, extr.name)
+        image_name = extr.name.split(".")[0]
+        # image = Image.open(image_path)
+
+        # print(f'image: {image.size}')
 
         cam_info = CameraInfo(
             uid=uid,
@@ -118,11 +130,15 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
             T=T,
             FovY=FovY,
             FovX=FovX,
-            image=image,
+            # image=image,
             image_path=image_path,
             image_name=image_name,
             width=width,
             height=height,
+            focal_x=focal_length_x,
+            focal_y=focal_length_y,
+            cx=cx,
+            cy=cy,
         )
 
         cam_infos.append(cam_info)
