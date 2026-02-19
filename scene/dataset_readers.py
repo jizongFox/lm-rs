@@ -114,9 +114,9 @@ def readColmapCameras(cam_extrinsics, cam_intrinsics, images_folder):
             cx = intr.params[2]
             cy = intr.params[3]
         else:
-            assert False, (
-                "Colmap camera model not handled: only undistorted datasets (PINHOLE or SIMPLE_PINHOLE cameras) supported!"
-            )
+            assert (
+                False
+            ), "Colmap camera model not handled: only undistorted datasets (PINHOLE or SIMPLE_PINHOLE cameras) supported!"
 
         image_path: str = os.path.join(images_folder, extr.name)
         image_name = extr.name.split(".")[0]

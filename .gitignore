@@ -19,7 +19,11 @@ venv
 *.txt
 *.pdf
 *.csv
-
+submodules
+SIBR_viewers
+lpipsPyTorch
+assets
+.jbeval
 __pycache__/
 
 # IDE

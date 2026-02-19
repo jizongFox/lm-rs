@@ -3,7 +3,7 @@
 # GRAPHDECO research group, https://team.inria.fr/graphdeco
 # All rights reserved.
 #
-# This software is free for non-commercial, research and evaluation use 
+# This software is free for non-commercial, research and evaluation use
 # under the terms of the LICENSE.md file.
 #
 # For inquiries contact  george.drettakis@inria.fr
@@ -13,11 +13,13 @@ from argparse import ArgumentParser, Namespace
 import sys
 import os
 
+
 class GroupParams:
     pass
 
+
 class ParamGroup:
-    def __init__(self, parser: ArgumentParser, name : str, fill_none = False):
+    def __init__(self, parser: ArgumentParser, name: str, fill_none=False):
         group = parser.add_argument_group(name)
         for key, value in vars(self).items():
             shorthand = False
@@ -25,12 +27,16 @@ class ParamGroup:
                 shorthand = True
                 key = key[1:]
             t = type(value)
-            value = value if not fill_none else None 
+            value = value if not fill_none else None
             if shorthand:
                 if t == bool:
-                    group.add_argument("--" + key, ("-" + key[0:1]), default=value, action="store_true")
+                    group.add_argument(
+                        "--" + key, ("-" + key[0:1]), default=value, action="store_true"
+                    )
                 else:
-                    group.add_argument("--" + key, ("-" + key[0:1]), default=value, type=t)
+                    group.add_argument(
+                        "--" + key, ("-" + key[0:1]), default=value, type=t
+                    )
             else:
                 if t == bool:
                     group.add_argument("--" + key, default=value, action="store_true")
@@ -44,7 +50,8 @@ class ParamGroup:
                 setattr(group, arg[0], arg[1])
         return group
 
-class ModelParams(ParamGroup): 
+
+class ModelParams(ParamGroup):
     def __init__(self, parser, sentinel=False):
         self.sh_degree = 0
         self._source_path = ""
@@ -61,6 +68,7 @@ class ModelParams(ParamGroup):
         g.source_path = os.path.abspath(g.source_path)
         return g
 
+
 class PipelineParams(ParamGroup):
     def __init__(self, parser):
         self.convert_SHs_python = False
@@ -70,6 +78,7 @@ class PipelineParams(ParamGroup):
         self.return_matvec_kernels = False
         self.enable_error_check = False
         super().__init__(parser, "Pipeline Parameters")
+
 
 class OptimizationParams(ParamGroup):
     def __init__(self, parser):
@@ -94,17 +103,18 @@ class OptimizationParams(ParamGroup):
         self.random_background = False
         self.big_pts_remove_starting_iter = 2000
         self.big_pts_remove_interval = 10
-        self.vs_size_threshold = 256 
+        self.vs_size_threshold = 256
         super().__init__(parser, "Optimization Parameters")
+
 
 class GaussNewtonOptimizationParams(ParamGroup):
     def __init__(self, parser):
 
-        self.cg_iter:int = 8
-        self.regularizer:float = 0.01
+        self.cg_iter: int = 8
+        self.regularizer: float = 0.01
         self.batch_size = 1
         self.linear_solver = "CG"
-        self.kernel = 1 # 1 for normal use -1 for debugging
+        self.kernel = 1  # 1 for normal use -1 for debugging
         self.ssim_weight = 0.2
 
         self.fixed_lr = 0.1
@@ -126,21 +136,22 @@ class GaussNewtonOptimizationParams(ParamGroup):
 
         super().__init__(parser, "GN Optimization Parameters")
 
+
 class SchedulerParameters(ParamGroup):
     def __init__(self, parser):
-        self.cgiter_breakpoints = "" 
+        self.cgiter_breakpoints = ""
         self.cgiter_values = "1"
-        self.batchsize_breakpoints = "" 
+        self.batchsize_breakpoints = ""
         self.batchsize_values = "1"
-        self.samplesize_breakpoints = "" 
+        self.samplesize_breakpoints = ""
         self.samplesize_values = "256"
-        self.lambda_breakpoints = "" 
+        self.lambda_breakpoints = ""
         self.lambda_values = "1e-2"
 
         super().__init__(parser, "GN Optimization Schedulers Parameters")
 
 
-def get_combined_args(parser : ArgumentParser):
+def get_combined_args(parser: ArgumentParser):
     cmdlne_string = sys.argv[1:]
     cfgfile_string = "Namespace()"
     args_cmdline = parser.parse_args(cmdlne_string)
@@ -157,7 +168,7 @@ def get_combined_args(parser : ArgumentParser):
     args_cfgfile = eval(cfgfile_string)
 
     merged_dict = vars(args_cfgfile).copy()
-    for k,v in vars(args_cmdline).items():
+    for k, v in vars(args_cmdline).items():
         if v != None:
             merged_dict[k] = v
     return Namespace(**merged_dict)

@@ -173,7 +173,7 @@ def training(
     gaussians.training_setup(opt, gn_opt_params)
 
     if checkpoint:
-        (model_params, first_iter) = torch.load(checkpoint)
+        model_params, first_iter = torch.load(checkpoint)
         gaussians.restore(model_params, opt, optimization_method, gn_opt_params)
         print("Ckpt Loaded. Number of Gaussians is, ", gaussians._xyz.shape[0])
 

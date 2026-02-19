@@ -6,7 +6,7 @@ class BasePieceWiseScheduler:
     def __init__(self, setup_dict):
         """
         Initializes the PieceWise Scheduler.
-        
+
         Parameters:
         - breakpoints: List of step thresholds where CG iterations change.
         - values: List of CG iterations corresponding to each breakpoint range.
@@ -14,7 +14,9 @@ class BasePieceWiseScheduler:
         breakpoints = setup_dict["breakpoints"]
         values = setup_dict["values"]
 
-        assert len(breakpoints) + 1 == len(values), "Lenght of breakpoints should be 1 more than lenght of values"
+        assert len(breakpoints) + 1 == len(
+            values
+        ), "Lenght of breakpoints should be 1 more than lenght of values"
 
         self.breakpoints = np.array(breakpoints)
         self.values = np.array(values)
@@ -34,17 +36,21 @@ class BasePieceWiseScheduler:
         plt.legend()
         plt.show()
 
+
 class CGIterScheduler(BasePieceWiseScheduler):
     def __init__(self, setup_dict):
         super().__init__(setup_dict)
+
 
 class BatchSizeScheduler(BasePieceWiseScheduler):
     def __init__(self, setup_dict):
         super().__init__(setup_dict)
 
+
 class SampleSizeScheduler(BasePieceWiseScheduler):
     def __init__(self, setup_dict):
         super().__init__(setup_dict)
+
 
 class LambdaScheduler(BasePieceWiseScheduler):
     def __init__(self, setup_dict):

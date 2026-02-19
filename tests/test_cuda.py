@@ -23,40 +23,59 @@ CUDA Layout (Gradient, Diagonal and JTJv).
 First All the Opacity Params: o_1 o_2 o_3 .... o_{total gaussians} Then the first color parameter c1_1 c1_2 .... c1_{total_gaussians} 
 """
 
-attribute_to_name = {0: "opacity", 
-                     1: "color_r", 
-                     2: "color_g", 
-                     3: "color_b", 
-                     4: "mean_x", 
-                     5: "mean_y", 
-                     6: "mean_z",
-                     7: "scale_x", 
-                     8: "scale_y", 
-                     9: "scale_z", 
-                     10: "rotation_r", 
-                     11: "rotation_x", 
-                     12: "rotation_y", 
-                     13: "rotation_z"}
-parser = argparse.ArgumentParser(
-        description="Tests the CUDA results."
-    )
+attribute_to_name = {
+    0: "opacity",
+    1: "color_r",
+    2: "color_g",
+    3: "color_b",
+    4: "mean_x",
+    5: "mean_y",
+    6: "mean_z",
+    7: "scale_x",
+    8: "scale_y",
+    9: "scale_z",
+    10: "rotation_r",
+    11: "rotation_x",
+    12: "rotation_y",
+    13: "rotation_z",
+}
+parser = argparse.ArgumentParser(description="Tests the CUDA results.")
 parser.add_argument("--batch_size", type=int, default=4)
-parser.add_argument("--Jpath", type=str, 
-    default="tests/GT_Jacobians/Jacobians", help="Main path to GT Jacobians")
-parser.add_argument("--J_cuda_path", type=str, 
-    default="tests/gauss-newton-ckpt/cuda_results", help="Main path to CUDA results")
-parser.add_argument("--atol", type=float, 
-    default=1e-5, help="Absolute Tolerance for Comparisons")
-parser.add_argument("--rtol", type=float, 
-    default=1e-3, help="Relative Tolerance for Comparisons")
-parser.add_argument("--rtol_jtjv", type=float, 
-    default=1e-1, help="Relative Tolerance for JTJv Product Comparisons")
-parser.add_argument("--failure_threshold", type=float, 
-    default=0.1, help="Numerical errors occur in computations. At what percentage we should be extra careful?")
+parser.add_argument(
+    "--Jpath",
+    type=str,
+    default="tests/GT_Jacobians/Jacobians",
+    help="Main path to GT Jacobians",
+)
+parser.add_argument(
+    "--J_cuda_path",
+    type=str,
+    default="tests/gauss-newton-ckpt/cuda_results",
+    help="Main path to CUDA results",
+)
+parser.add_argument(
+    "--atol", type=float, default=1e-5, help="Absolute Tolerance for Comparisons"
+)
+parser.add_argument(
+    "--rtol", type=float, default=1e-3, help="Relative Tolerance for Comparisons"
+)
+parser.add_argument(
+    "--rtol_jtjv",
+    type=float,
+    default=1e-1,
+    help="Relative Tolerance for JTJv Product Comparisons",
+)
+parser.add_argument(
+    "--failure_threshold",
+    type=float,
+    default=0.1,
+    help="Numerical errors occur in computations. At what percentage we should be extra careful?",
+)
 
 args = parser.parse_args()
 
-def info(name, cuda, gt ):
+
+def info(name, cuda, gt):
     print(f"------------------[WARNING] {name} Computation Has Errors")
     diff_idx = np.isclose(cuda, gt, atol=args.atol, rtol=args.rtol) == False
     print(f"GT {name} ", gt[diff_idx])
@@ -79,9 +98,10 @@ def info(name, cuda, gt ):
     else:
         print(f"[SUCCESS] {name} Computation Has Only Numerical Errors (Hopefully)")
 
+
 def tiles_to_indices(sampled_pixels, likelihoods):
-    no_tiles_in_row = math.ceil( H / TILE_SIZE)
-    no_tiles_in_col = math.ceil( W / TILE_SIZE)
+    no_tiles_in_row = math.ceil(H / TILE_SIZE)
+    no_tiles_in_col = math.ceil(W / TILE_SIZE)
     indices = []
     likelihoods_array = []
     for tile in range(sampled_pixels.shape[0]):
@@ -93,7 +113,7 @@ def tiles_to_indices(sampled_pixels, likelihoods):
             global_row = tile_row * TILE_SIZE + pix_row
             global_col = tile_col * TILE_SIZE + pix_col
             if global_row < H and global_col < W:
-                pix_id = global_row* W + global_col
+                pix_id = global_row * W + global_col
                 flattened_idx = pix_id * NUM_CHANNELS
                 indices.append(flattened_idx)
                 indices.append(flattened_idx + 1)
@@ -103,6 +123,7 @@ def tiles_to_indices(sampled_pixels, likelihoods):
                 likelihoods_array.append(sample_likelihood)
                 likelihoods_array.append(sample_likelihood)
     return indices, np.stack(likelihoods_array)
+
 
 total_batches = args.batch_size
 grad_gt = None
@@ -131,12 +152,11 @@ for batch in range(total_batches):
     grad_gt = np.zeros((J.shape[1])) if grad_gt is None else grad_gt
     diag_gt = np.zeros((J.shape[1])) if diag_gt is None else diag_gt
 
-
     ## Sample Jacobian
     r = r[indices]
     J = J[indices]
-    grad_gt += J.T @ (r / (likelihoods*SAMPLE_SIZE))
-    scaled = J / (likelihoods.reshape(-1, 1)*SAMPLE_SIZE)
+    grad_gt += J.T @ (r / (likelihoods * SAMPLE_SIZE))
+    scaled = J / (likelihoods.reshape(-1, 1) * SAMPLE_SIZE)
     diag_gt += np.einsum("ij,ji->i", J.T, scaled)
 
     del J
@@ -144,19 +164,23 @@ for batch in range(total_batches):
 ### Compare with CUDA Implementation
 
 # Change the layout to CUDA version.
-grad_gt_cuda_layout = grad_gt.reshape(-1, 14).T.flatten() #Do not lose the original layout, it will be needed
+grad_gt_cuda_layout = grad_gt.reshape(
+    -1, 14
+).T.flatten()  # Do not lose the original layout, it will be needed
 diag_gt = diag_gt.reshape(-1, 14).T.flatten()
 
-### Check Gradient 
-grad_path = os.path.join(args.J_cuda_path,"gradient_cuda.npy" )
+### Check Gradient
+grad_path = os.path.join(args.J_cuda_path, "gradient_cuda.npy")
 gradient_cuda = np.load(grad_path)
-is_gradient_close = np.allclose(gradient_cuda, grad_gt_cuda_layout, atol=args.atol, rtol=args.rtol)
+is_gradient_close = np.allclose(
+    gradient_cuda, grad_gt_cuda_layout, atol=args.atol, rtol=args.rtol
+)
 print("[TEST]- Is Gradient Close: ", is_gradient_close)
 if not is_gradient_close:
     info("Gradient", gradient_cuda, grad_gt_cuda_layout)
 
-### Check Diagonal 
-diag_path = os.path.join(args.J_cuda_path,"diag_cuda.npy" )
+### Check Diagonal
+diag_path = os.path.join(args.J_cuda_path, "diag_cuda.npy")
 diag_cuda = np.load(diag_path)
 is_diag_close = np.allclose(diag_cuda, diag_gt, atol=args.atol, rtol=args.rtol)
 print("[TEST]- Is Diagonal Close: ", is_diag_close)
@@ -164,7 +188,7 @@ if not is_diag_close:
     info("Diagonal", diag_cuda, diag_gt)
 
 ## Check JTJv Results, where v is the residual, i.e. first step of CG
-JTJv_path = os.path.join(args.J_cuda_path, "JTJv_cuda.npy" )
+JTJv_path = os.path.join(args.J_cuda_path, "JTJv_cuda.npy")
 JTJv_cuda = np.load(JTJv_path)
 for batch in range(total_batches):
     sampled_pixels = all_sampled_pixels[batch]
@@ -181,7 +205,7 @@ for batch in range(total_batches):
     r = r[indices]
     J = J[indices]
     Jv = J @ grad_gt
-    JTJv_gt += J.T @ (Jv / (likelihoods*SAMPLE_SIZE))
+    JTJv_gt += J.T @ (Jv / (likelihoods * SAMPLE_SIZE))
 
     del J
 

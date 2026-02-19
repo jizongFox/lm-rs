@@ -1,5 +1,3 @@
-
-
-class LBFGSOptimizer():
+class LBFGSOptimizer:
     def __init__():
         pass
